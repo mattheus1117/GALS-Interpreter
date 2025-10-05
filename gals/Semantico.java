@@ -2,7 +2,6 @@ package gals;
 
 import java.util.*;
 
-
 public class Semantico implements Constants {
     Map<String, Integer> variables = new MashMap<String, Integer>();
     Stack<List<Integer>> operandStack = new Stack<>();
@@ -83,4 +82,85 @@ public class Semantico implements Constants {
             throw new SemanticError("Ação não encontrada");
         }
     }
+
+    private void addOperator(String operator) {
+        operatorList.add(operator);
+    }
+
+    private void addOperand(String operand) {
+        operandList.add(operand);
+    }
+
+    private void evaluateExpression(List<Integer> operandList, List<String> operatorlList) {
+        // Prioridade de operações: log, ^, *, /, +, -
+        List<String> operators = new ArrayList<>();
+        operators.add("log");
+        operators.add("^");
+        operators.add("*");
+        operators.add("/");
+        operators.add("+");
+        operators.add("-");
+        evaluateOperator(operators.subList(0, 1), operandList, operatorlList);
+        evaluateOperator(operators.subList(1, 2), operandList, operatorlList);
+        evaluateOperator(operators.subList(2, 4), operandList, operatorlList);
+        evaluateOperator(operators.subList(4, 6), operandList, operatorlList);
+    }
+
+    private void evaluateOperator(List<String> targertOperators, List<Integer> operandList, List<String> operatorList) {
+        for (int i = 0; i < operatorList.size(); i++) {
+            String operator = operatorList.get(i);
+
+            if (targertOperators.contains (operator)) {
+                Integer num1 = operandList.get(i);
+                Integer num2 = !operator.equals("log") ? operandList.get(i + 1) : null; // O segundo operando não é necessário para o logaritmo
+            }
+        
+            // Realisar a operação de acordo com o operador
+            switch (operator) {
+                case "^":
+                    // System.out.println(num1 + " ^ " + num2);
+                    result = (int) Math.pow(num1, num2);
+                    break;
+                case "*":
+                    // System.out.println(num1 + " * " + num2);
+                    result = num1 * num2;
+                    break;
+                case "/":
+                    if (num2 == 0) {
+                        throw new ArithmeticException("Divisão por zero.");
+                    }
+                    // System.out.println(num1 + " / " + num2);
+                    result = num1 / num2;
+                    break;
+                case "+":
+                    // System.out.println(num1 + " + " + num2);
+                    result = num1 + num2;
+                    break;
+                case "-":
+                    // System.out.println(num1 + " - " + num2);
+                    result = num1 - num2;
+                    break;
+                case "log":
+                    if (num1 <= 0) {
+                        throw new ArithmeticException("Logaritmo de número não positivo.");
+                    }
+                    // System.out.println("log(" + num1 + ")");
+                    result = (int) Math.log10(num1);
+                    // Atualiza apenas o primeiro operando, pois o logaritmo nãoi precisa de um segundo
+                    operandList.set(i, result);
+
+                    // Remove o operador processado
+                    operatorList.remove(i);
+                    i++; // Reajusta o índice para continuar a verificação
+                    continue;
+            }
+            // Atualiza operandos e operadores
+            operandList.set(i, result); // Substitui o primeiro operando pelo resultado
+            operandList.remove(i + 1); // Remove o segundo operando
+            operatorList.remove(i); // Remove o operador processado
+            i++; // Reajusta o índice para continuar com a verificação
+        }
+
+    }
+
 }
