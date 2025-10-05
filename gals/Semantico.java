@@ -3,11 +3,11 @@ package gals;
 import java.util.*;
 
 public class Semantico implements Constants {
-    Map<String, Integer> variables = new MashMap<String, Integer>();
+    Map<String, Integer> variables = new HashMap<String, Integer>();
     Stack<List<Integer>> operandStack = new Stack<>();
     Stack<List<String>> operatorStack = new Stack<>();
     List<Integer> operandList = new ArrayList<>();
-    List<Integer> operatorList = new ArrayList<>();
+    List<String> operatorList = new ArrayList<>();
     String currentVariable;
 
     public void executeAction(int action, Token token)	throws SemanticError {
@@ -42,12 +42,12 @@ public class Semantico implements Constants {
 
             // Valores numéricos utilizados na espressão
             case 5:
-                addOperand(Integer.parseInt(token.getLexeme(), 2));
+                addOperand(Integer.parseInt(token.getLexeme(),2 ));
                 break;
             
             // Variáveis utilizadas nas expressões
             case 6:
-                addOperand(Variables.get(token.getLexeme()));
+                addOperand(variables.get(token.getLexeme()));
                 break;
             
             // Abrir parênteses
@@ -67,8 +67,8 @@ public class Semantico implements Constants {
                 Integer parenthesesResult = operandList.get(0);
 
                 // Restaurar as listas anteriores (camada inferior)
-                List<Integer> previousOperandList = OperandStack.pop();
-                List<String> previousOperatorList = OperatorStack.pop();
+                List<Integer> previousOperandList = operandStack.pop();
+                List<String> previousOperatorList = operatorStack.pop();
 
                 // Adiciona o resultado da expressão dentro dos parênteses à lista da camada atual (inferior)
                 previousOperandList.add(parenthesesResult);
@@ -87,7 +87,7 @@ public class Semantico implements Constants {
         operatorList.add(operator);
     }
 
-    private void addOperand(String operand) {
+    private void addOperand(Integer operand) {
         operandList.add(operand);
     }
 
@@ -110,57 +110,57 @@ public class Semantico implements Constants {
         for (int i = 0; i < operatorList.size(); i++) {
             String operator = operatorList.get(i);
 
-            if (targertOperators.contains (operator)) {
+            if (targertOperators.contains(operator)) {
                 Integer num1 = operandList.get(i);
                 Integer num2 = !operator.equals("log") ? operandList.get(i + 1) : null; // O segundo operando não é necessário para o logaritmo
-            }
-        
-            // Realisar a operação de acordo com o operador
-            switch (operator) {
-                case "^":
-                    // System.out.println(num1 + " ^ " + num2);
-                    result = (int) Math.pow(num1, num2);
-                    break;
-                case "*":
-                    // System.out.println(num1 + " * " + num2);
-                    result = num1 * num2;
-                    break;
-                case "/":
-                    if (num2 == 0) {
-                        throw new ArithmeticException("Divisão por zero.");
-                    }
-                    // System.out.println(num1 + " / " + num2);
-                    result = num1 / num2;
-                    break;
-                case "+":
-                    // System.out.println(num1 + " + " + num2);
-                    result = num1 + num2;
-                    break;
-                case "-":
-                    // System.out.println(num1 + " - " + num2);
-                    result = num1 - num2;
-                    break;
-                case "log":
-                    if (num1 <= 0) {
-                        throw new ArithmeticException("Logaritmo de número não positivo.");
-                    }
-                    // System.out.println("log(" + num1 + ")");
-                    result = (int) Math.log10(num1);
-                    // Atualiza apenas o primeiro operando, pois o logaritmo nãoi precisa de um segundo
-                    operandList.set(i, result);
+                Integer result = null;
 
-                    // Remove o operador processado
-                    operatorList.remove(i);
-                    i++; // Reajusta o índice para continuar a verificação
-                    continue;
+                // Realisar a operação de acordo com o operador
+                switch (operator) {
+                    case "^":
+                        // System.out.println(num1 + " ^ " + num2);
+                        result = (int) Math.pow(num1, num2);
+                        break;
+                    case "*":
+                        // System.out.println(num1 + " * " + num2);
+                        result = num1 * num2;
+                        break;
+                    case "/":
+                        if (num2 == 0) {
+                            throw new ArithmeticException("Divisão por zero.");
+                        }
+                        // System.out.println(num1 + " / " + num2);
+                        result = num1 / num2;
+                        break;
+                    case "+":
+                        // System.out.println(num1 + " + " + num2);
+                        result = num1 + num2;
+                        break;
+                    case "-":
+                        // System.out.println(num1 + " - " + num2);
+                        result = num1 - num2;
+                        break;
+                    case "log":
+                        if (num1 <= 0) {
+                            throw new ArithmeticException("Logaritmo de número não positivo.");
+                        }
+                        // System.out.println("log(" + num1 + ")");
+                        result = (int) Math.log10(num1);
+                        // Atualiza apenas o primeiro operando, pois o logaritmo nãoi precisa de um segundo
+                        operandList.set(i, result);
+
+                        // Remove o operador processado
+                        operatorList.remove(i);
+                        i++; // Reajusta o índice para continuar a verificação
+                        continue;
+                }
+
+                // Atualiza operandos e operadores
+                operandList.set(i, result); // Substitui o primeiro operando pelo resultado
+                operandList.remove(i + 1); // Remove o segundo operando
+                operatorList.remove(i); // Remove o operador processado
+                i++; // Reajusta o índice para continuar com a verificação
             }
-            // Atualiza operandos e operadores
-            operandList.set(i, result); // Substitui o primeiro operando pelo resultado
-            operandList.remove(i + 1); // Remove o segundo operando
-            operatorList.remove(i); // Remove o operador processado
-            i++; // Reajusta o índice para continuar com a verificação
         }
-
     }
-
 }
