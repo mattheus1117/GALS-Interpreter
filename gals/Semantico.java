@@ -14,7 +14,9 @@ public class Semantico implements Constants {
         switch (action) {
             // Print
             case 1:
-                System.out.println(currentVariable + " = " + Integer.toBinaryString(variables.get(currentVariable)) + "\n" );
+                if (!variables.containsKey(currentVariable))
+                    throw new SemanticError("Tentativa de print de variável não definida: " + currentVariable);
+                System.out.println(currentVariable + " = " + Integer.toBinaryString(variables.get(currentVariable)));
                 break;
 
             // Atribuir valor da expressão à uma variável
@@ -47,7 +49,11 @@ public class Semantico implements Constants {
             
             // Variáveis utilizadas nas expressões
             case 6:
-                addOperand(variables.get(token.getLexeme()));
+                Integer value = variables.get(token.getLexeme());
+                if (value == null) {
+                    throw new SemanticError("Variável '" + token.getLexeme() + "' não definida.");
+                }
+                addOperand(value);
                 break;
             
             // Abrir parênteses
@@ -79,7 +85,7 @@ public class Semantico implements Constants {
                 break;
             
             default:
-            throw new SemanticError("Ação não encontrada");
+            throw new SemanticError("Ação semântica #" + action + " nao encontrada para token: " + token.getLexeme());
         }
     }
 
@@ -91,7 +97,7 @@ public class Semantico implements Constants {
         operandList.add(operand);
     }
 
-    private void evaluateExpression(List<Integer> operandList, List<String> operatorList) {
+    private void evaluateExpression(List<Integer> operandList, List<String> operatorList)  throws SemanticError {
         // Prioridade de operações: log, ^, *, /, +, -
         evaluateOperator(Arrays.asList("log"), operandList, operatorList);
         evaluateOperator(Arrays.asList("^"), operandList, operatorList);
@@ -99,7 +105,7 @@ public class Semantico implements Constants {
         evaluateOperator(Arrays.asList("+", "-"), operandList, operatorList);
     }
 
-    private void evaluateOperator(List<String> targetOperators, List<Integer> operandList, List<String> operatorList) {
+    private void evaluateOperator(List<String> targetOperators, List<Integer> operandList, List<String> operatorList) throws SemanticError  {
         for (int i = 0; i < operatorList.size(); i++) {
             String operator = operatorList.get(i);
 
@@ -122,7 +128,7 @@ public class Semantico implements Constants {
                         break;
                     case "/":
                         if (num2 == 0) {
-                            throw new ArithmeticException("Divisão por zero.");
+                            throw new ArithmeticException("Divisão por zero na operação " + num1 + " / " + num2);
                         }
                         // System.out.println(num1 + " / " + num2);
                         result = num1 / num2;
@@ -137,7 +143,7 @@ public class Semantico implements Constants {
                         break;
                     case "log":
                         if (num1 <= 0) {
-                            throw new ArithmeticException("Logaritmo de número não positivo.");
+                            throw new ArithmeticException("Logaritmo de número não positivo: " + num1);
                         }
                         // System.out.println("log(" + num1 + ")");
                         result = (int) Math.log10(num1);
@@ -152,6 +158,11 @@ public class Semantico implements Constants {
 
                 // Atualiza operandos e operadores
                 operandList.set(i, result); // Substitui o primeiro operando pelo resultado
+                
+                if (result < 0) {
+                    throw new SemanticError("Resultado negativo não permitido: " + result);
+                }
+
                 operandList.remove(i + 1); // Remove o segundo operando
                 operatorList.remove(i); // Remove o operador processado
                 i--; // Reajusta o índice para continuar com a verificação

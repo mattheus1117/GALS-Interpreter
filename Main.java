@@ -8,15 +8,15 @@ public class Main {
         try {
             // String filePath = "entrada.txt";
 
-            Lexico lexico = new Lexico("A = 10;B = A + 11;show(B);");
+            Lexico lexico = new Lexico("A = 1010;B = 101;C = B - A;show(C);");
             Sintatico sintatico = new Sintatico();
             Semantico semantico = new Semantico();
 
             sintatico.parse(lexico, semantico);
         } 
         catch (Exception e) {
-            System.out.println("Erro encontrado:");
-            e.printStackTrace(); // Mostra o erro detalhado
+            System.out.println("Erro encontrado: " + e.getMessage());
+            //e.printStackTrace(); // Mostra o erro detalhado
         }
     }
 }
