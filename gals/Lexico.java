@@ -1,5 +1,8 @@
 package gals;
 
+import java.io.IOException;
+import java.io.Reader;
+
 public class Lexico implements Constants
 {
     private int position;
@@ -13,6 +16,15 @@ public class Lexico implements Constants
     public Lexico(String input)
     {
         setInput(input);
+    }
+
+    public Lexico(Reader reader) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int c;
+        while ((c = reader.read()) != -1) {
+            sb.append((char)c);
+        }
+        setInput(sb.toString());
     }
 
     public void setInput(String input)

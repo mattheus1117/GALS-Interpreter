@@ -1,14 +1,18 @@
 import gals.Lexico;
 import gals.Semantico;
 import gals.Sintatico;
-import java.io.*;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            // String filePath = "entrada.txt";
+            String filePath = "entrada.txt";  // caminho relativo ao Main.java
+            Reader fileRender = new FileReader(filePath);
 
-            Lexico lexico = new Lexico("A = 1010;B = 101;C = B - A;show(C);");
+            Lexico lexico = new Lexico(fileRender);
             Sintatico sintatico = new Sintatico();
             Semantico semantico = new Semantico();
 
@@ -16,7 +20,6 @@ public class Main {
         } 
         catch (Exception e) {
             System.out.println("Erro encontrado: " + e.getMessage());
-            //e.printStackTrace(); // Mostra o erro detalhado
         }
     }
 }
