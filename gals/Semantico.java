@@ -132,28 +132,38 @@ public class Semantico implements Constants {
                 } else {
                     num2 = null;
                 }
-                
+
                 Integer result = null;
 
                 switch (operator) {
                     case "^":
                         result = (int) Math.pow(num1, num2);
                         break;
+                        
+
                     case "*":
                         result = num1 * num2;
                         break;
+
+
                     case "/":
                         if (num2 == 0) {
                             throw new ArithmeticException("Divisão por zero na operação " + num1 + " / " + num2);
                         }
                         result = num1 / num2;
                         break;
+
+
                     case "+":
                         result = num1 + num2;
                         break;
+
+
                     case "-":
                         result = num1 - num2;
                         break;
+
+
                     case "log":
                         if (num1 <= 0) {
                             throw new ArithmeticException("Logaritmo de número não positivo: " + num1);
@@ -166,10 +176,12 @@ public class Semantico implements Constants {
                 }
                 operandoAtual.set(i, result);
                 
+
                 if (result < 0) {
                     throw new SemanticError("Resultado negativo não permitido: " + result);
                 }
 
+                
                 operandoAtual.remove(i + 1);
                 operandorAtual.remove(i);
                 i--;
