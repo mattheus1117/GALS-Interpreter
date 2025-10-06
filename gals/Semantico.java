@@ -9,17 +9,27 @@ public class Semantico implements Constants {
     List<Integer> operandoAtual = new ArrayList<>();
     List<String> operandorAtual = new ArrayList<>();
     String variavelAtual;
+    String mostrarVariavel;
 
 
 
 
     public void executeAction(int action, Token token)	throws SemanticError {
         switch (action) {
+            case 0:
+                mostrarVariavel = token.getLexeme();
+                break;
+
+
 
             case 1:
-                if (!tabelaVariaveis.containsKey(variavelAtual))
-                    throw new SemanticError("Tentativa de print de variável não definida: " + variavelAtual);
-                System.out.println(variavelAtual + " = " + Integer.toBinaryString(tabelaVariaveis.get(variavelAtual)));
+                if (mostrarVariavel == null)
+                    throw new SemanticError("Nenhuma variável especificada para exibição.");
+
+                if (!tabelaVariaveis.containsKey(mostrarVariavel))
+                    throw new SemanticError("Tentativa de print de variável não definida: " + mostrarVariavel);
+
+                System.out.println(mostrarVariavel + " = " + Integer.toBinaryString(tabelaVariaveis.get(mostrarVariavel)));
                 break;
 
 

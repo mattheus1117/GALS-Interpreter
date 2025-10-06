@@ -1,5 +1,6 @@
 package gals;
 
+
 public interface ScannerConstants
 {
     int[][] SCANNER_TABLE = 

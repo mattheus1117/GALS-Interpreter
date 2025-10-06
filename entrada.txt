@@ -1,4 +1,6 @@
 A = 1;
 B = 10;
 C = A + B;
+show(A);
+show(B);
 show(C);
