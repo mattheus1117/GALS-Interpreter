@@ -2,14 +2,12 @@ import gals.Lexico;
 import gals.Semantico;
 import gals.Sintatico;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            String filePath = "entrada.txt";  // caminho relativo ao Main.java
+            String filePath = "entrada.txt";
             Reader fileRender = new FileReader(filePath);
 
             Lexico lexico = new Lexico(fileRender);
