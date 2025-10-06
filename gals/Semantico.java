@@ -26,7 +26,7 @@ public class Semantico implements Constants {
             case 3:
                 if (!operandStack.isEmpty()){
                     throw new SemanticError("Expressão incompleta: pârenteses não foram fechados");
-                };
+                }
 
                 evaluateExpression(operandList, operatorList); // Avalia a expressão inteira
                 variables.put(currentVariable, operandList.get(0)); // O resultado será o primeiro (e único) elemento restante
@@ -63,7 +63,7 @@ public class Semantico implements Constants {
                 // Avalia a expressão dentro dos parênteses
                 evaluateExpression(operandList, operatorList);
 
-                // O resultado da avalição será o primeiro (e o único) elemnto restante
+                // O resultado da avalição será o primeiro (e o único) elemento restante
                 Integer parenthesesResult = operandList.get(0);
 
                 // Restaurar as listas anteriores (camada inferior)
@@ -91,28 +91,23 @@ public class Semantico implements Constants {
         operandList.add(operand);
     }
 
-    private void evaluateExpression(List<Integer> operandList, List<String> operatorlList) {
+    private void evaluateExpression(List<Integer> operandList, List<String> operatorList) {
         // Prioridade de operações: log, ^, *, /, +, -
-        List<String> operators = new ArrayList<>();
-        operators.add("log");
-        operators.add("^");
-        operators.add("*");
-        operators.add("/");
-        operators.add("+");
-        operators.add("-");
-        evaluateOperator(operators.subList(0, 1), operandList, operatorlList);
-        evaluateOperator(operators.subList(1, 2), operandList, operatorlList);
-        evaluateOperator(operators.subList(2, 4), operandList, operatorlList);
-        evaluateOperator(operators.subList(4, 6), operandList, operatorlList);
+        evaluateOperator(Arrays.asList("log"), operandList, operatorList);
+        evaluateOperator(Arrays.asList("^"), operandList, operatorList);
+        evaluateOperator(Arrays.asList("*", "/"), operandList, operatorList);
+        evaluateOperator(Arrays.asList("+", "-"), operandList, operatorList);
     }
 
-    private void evaluateOperator(List<String> targertOperators, List<Integer> operandList, List<String> operatorList) {
+    private void evaluateOperator(List<String> targetOperators, List<Integer> operandList, List<String> operatorList) {
         for (int i = 0; i < operatorList.size(); i++) {
             String operator = operatorList.get(i);
 
-            if (targertOperators.contains(operator)) {
+            if (targetOperators.contains(operator)) {
                 Integer num1 = operandList.get(i);
-                Integer num2 = !operator.equals("log") ? operandList.get(i + 1) : null; // O segundo operando não é necessário para o logaritmo
+                Integer num2 = !operator.equals("log") 
+                    ? operandList.get(i + 1) 
+                    : null; // O segundo operando não é necessário para o logaritmo
                 Integer result = null;
 
                 // Realisar a operação de acordo com o operador
@@ -151,7 +146,7 @@ public class Semantico implements Constants {
 
                         // Remove o operador processado
                         operatorList.remove(i);
-                        i++; // Reajusta o índice para continuar a verificação
+                        i--; // Reajusta o índice para continuar a verificação
                         continue;
                 }
 
@@ -159,7 +154,7 @@ public class Semantico implements Constants {
                 operandList.set(i, result); // Substitui o primeiro operando pelo resultado
                 operandList.remove(i + 1); // Remove o segundo operando
                 operatorList.remove(i); // Remove o operador processado
-                i++; // Reajusta o índice para continuar com a verificação
+                i--; // Reajusta o índice para continuar com a verificação
             }
         }
     }
